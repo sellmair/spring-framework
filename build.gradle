@@ -2,7 +2,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE' apply false
 	id 'io.spring.nohttp' version '0.0.5.RELEASE'
 	id 'org.jetbrains.kotlin.jvm' version '1.4.0' apply false
-	id 'org.jetbrains.dokka' version '0.10.1' apply false
+	id 'org.jetbrains.dokka' version '1.4.0' apply false
 	id 'org.asciidoctor.jvm.convert' version '2.4.0'
 	id 'de.undercouch.download' version '4.1.1'
 	id "io.freefair.aspectj" version '5.1.1' apply false
@@ -286,6 +286,7 @@ configure(allprojects) { project ->
 			mavenCentral()
 			maven { url "https://repo.spring.io/libs-spring-framework-build" }
 			maven { url "https://repo.spring.io/snapshot" } // Reactor and RSocket
+			jcenter() // Dokka transitive dependencies
 		}
 	}
 	configurations.all {
@@ -321,6 +322,27 @@ configure([rootProject] + javaProjects) { project ->
 			kotlinOptions {
 				jvmTarget = "1.8"
 				freeCompilerArgs = ["-Xjsr305=strict"]
+			}
+		}
+		// The set non idiomatic syntax is due to https://github.com/gradle/gradle/issues/9268
+		tasks.named("dokkaHtml") {
+			outputDirectory.set(new File(buildDir, "docs/kdoc"))
+			dokkaSourceSets {
+				configureEach {
+					sourceRoots.setFrom(file("src/main/kotlin")) // Does not work
+					externalDocumentationLink {
+						url.set(new URL("https://docs.spring.io/spring-framework/docs/current/javadoc-api/"))
+					}
+					externalDocumentationLink {
+						url.set(new URL("https://projectreactor.io/docs/core/release/api/"))
+					}
+					externalDocumentationLink {
+						url.set(new URL("https://www.reactive-streams.org/reactive-streams-1.0.1-javadoc/"))
+					}
+					externalDocumentationLink {
+						url.set(new URL("https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/"))
+					}
+				}
 			}
 		}
 	}
