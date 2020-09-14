@@ -1,0 +1,30 @@
+
+/**
+ * Produce KDoc for all Spring Framework modules in "build/docs/kdoc"
+ */
+tasks.named("dokkaHtml") {
+    dependsOn {
+        rootProject.tasks.named("api")
+    }
+    outputDirectory = new File(buildDir, "docs/kdoc")
+    dokkaSourceSets {
+        configureEach {
+            sourceRoots.setFrom(file("src/main/kotlin"))
+
+            externalDocumentationLink {
+                url.set(new URL("https://docs.spring.io/spring-framework/docs/current/javadoc-api/"))
+                packageListUrl.set(new File(rootProject.buildDir, "docs/javadoc/package-list").toURI().toURL())
+            }
+
+            externalDocumentationLink {
+                url.set(new URL("https://projectreactor.io/docs/core/release/api/"))
+            }
+            externalDocumentationLink {
+                url.set(new URL("https://www.reactive-streams.org/reactive-streams-1.0.1-javadoc/"))
+            }
+            externalDocumentationLink {
+                url.set(new URL("https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/"))
+            }
+        }
+    }
+}

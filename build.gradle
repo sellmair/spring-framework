@@ -309,6 +309,7 @@ configure([rootProject] + javaProjects) { project ->
 
 	pluginManager.withPlugin("kotlin") {
 		apply plugin: "org.jetbrains.dokka"
+		apply from: "${rootDir}/gradle/docs-subproject.gradle"
 		compileKotlin {
 			kotlinOptions {
 				jvmTarget = "1.8"
